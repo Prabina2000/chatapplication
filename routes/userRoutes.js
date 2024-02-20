@@ -9,9 +9,15 @@ const router = express.Router();
 // User registration
 router.post('/register', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, phoneNumber, email } = req.body;
+
+    // Check if any required field is empty
+    if (!username || !password || !phoneNumber || !email) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword });
+    const user = new User({ username, password: hashedPassword, phoneNumber, email });
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
